@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente de Tarefas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #2d3748;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #4a90e2;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: normal;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            width: 100%;
+        }
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .task-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .task-title {
+            font-size: 24px;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .task-description {
+            font-size: 18px;
+            color: #718096;
+        }
+
+        .step-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .step-title {
+            font-size: 28px;
+            color: #2d3748;
+        }
+
+        .step-counter {
+            font-size: 20px;
+            color: #718096;
+            background: #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 25px;
+        }
+
+        .step-content {
+            margin-bottom: 40px;
+        }
+
+        .step-instruction {
+            font-size: 24px;
+            line-height: 1.6;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+
+        .step-visual {
+            background: #f7fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #4a5568;
+        }
+
+        .step-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 20px 40px;
+            font-size: 22px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-back {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-back:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-next {
+            background: #48bb78;
+            color: white;
+            flex-grow: 1;
+        }
+
+        .btn-next:hover {
+            background: #38a169;
+        }
+
+        .btn-home {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .btn-home:hover {
+            background: #3182ce;
+        }
+
+        .btn-complete {
+            background: #9f7aea;
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background: #805ad5;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: #48bb78;
+            margin-bottom: 20px;
+        }
+
+        .success-text {
+            font-size: 28px;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .step-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🖥️ Assistente de Tarefas</h1>
+    </header>
+
+    <div class="container">
+        <div class="task-grid" id="taskGrid">
+            <div class="task-card" onclick="startTask('email')">
+                <div class="task-icon">📧</div>
+                <h2 class="task-title">Enviar Email com Foto</h2>
+                <p class="task-description">Aprenda a enviar fotos para família e amigos</p>
+            </div>
+
+            <div class="task-card" onclick="startTask('video')">
+                <div class="task-icon">📹</div>
+                <h2 class="task-title">Fazer Videochamada</h2>
+                <p class="task-description">Fale cara a cara com quem está longe</p>
+            </div>
+
+            <div class="task-card" onclick="startTask('photo')">
+                <div class="task-icon">🖼️</div>
+                <h2 class="task-title">Ver e Organizar Fotos</h2>
+                <p class="task-description">Encontre e organize as suas fotos</p>
+            </div>
+
+            <div class="task-card" onclick="startTask('print')">
+                <div class="task-icon">🖨️</div>
+                <h2 class="task-title">Imprimir Documento</h2>
+                <p class="task-description">Imprima documentos e fotos facilmente</p>
+            </div>
+        </div>
+
+        <div class="step-container" id="stepContainer">
+            <div class="step-header">
+                <h2 class="step-title" id="stepTitle">Tarefa</h2>
+                <span class="step-counter" id="stepCounter">Passo 1 de 5</span>
+            </div>
+
+            <div class="step-content">
+                <p class="step-instruction" id="stepInstruction">Instrução do passo</p>
+                <div class="step-visual" id="stepVisual">
+                    Área visual
+                </div>
+            </div>
+
+            <div class="step-buttons">
+                <button class="btn btn-back" onclick="previousStep()" id="btnBack">← Voltar</button>
+                <button class="btn btn-next" onclick="nextStep()" id="btnNext">Próximo Passo →</button>
+            </div>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✅</div>
+            <h2 class="success-text">Parabéns! Tarefa concluída com sucesso!</h2>
+            <button class="btn btn-home" onclick="goHome()">Voltar ao Início</button>
+        </div>
+    </div>
+
+    <script>
+        const tasks = {
+            email: {
+                title: "Enviar Email com Foto",
+                steps: [
+                    {
+                        instruction: "Primeiro, vamos abrir o seu programa de email. Procure o ícone do email no seu computador e clique uma vez.",
+                        visual: "🖱️ Clique no ícone do Email<br><br>Normalmente está no ambiente de trabalho ou na barra de tarefas"
+                    },
+                    {
+                        instruction: "Agora clique no botão 'Novo Email' ou 'Escrever'. É geralmente um botão grande no canto superior.",
+                        visual: "📝 Procure por:<br><br>• 'Novo Email'<br>• 'Escrever'<br>• 'Compor'<br>• Um ícone de lápis ✏️"
+                    },
+                    {
+                        instruction: "No campo 'Para:', escreva o email da pessoa. Clique na caixa e digite com calma.",
+                        visual: "Para: exemplo@email.com<br><br>💡 Dica: Verifique se escreveu corretamente!"
+                    },
+                    {
+                        instruction: "Para adicionar a foto, procure o botão de 'Anexar' ou um ícone de clipe 📎. Clique nele.",
+                        visual: "📎 Procure por:<br><br>• Botão 'Anexar'<br>• Ícone de clipe<br>• 'Adicionar ficheiro'"
+                    },
+                    {
+                        instruction: "Escolha a foto que quer enviar e clique em 'Abrir'. Depois clique em 'Enviar'!",
+                        visual: "1️⃣ Selecione a foto<br>2️⃣ Clique 'Abrir'<br>3️⃣ Clique 'Enviar'<br><br>✉️ Email enviado!"
+                    }
+                ]
+            },
+            video: {
+                title: "Fazer Videochamada",
+                steps: [
+                    {
+                        instruction: "Vamos abrir o programa de videochamadas. Procure o ícone no seu computador.",
+                        visual: "🎥 Programas comuns:<br><br>• Messenger<br>• WhatsApp<br>• Zoom<br>• Google Meet"
+                    },
+                    {
+                        instruction: "Encontre o contacto com quem quer falar. Pode estar numa lista do lado esquerdo.",
+                        visual: "👥 Lista de Contactos<br><br>Clique no nome da pessoa<br>com quem quer falar"
+                    },
+                    {
+                        instruction: "Clique no botão de videochamada. É normalmente um ícone de câmara 📹.",
+                        visual: "📹 Procure o botão de vídeo<br><br>Pode dizer:<br>• 'Videochamada'<br>• 'Chamar com vídeo'<br>• Ícone de câmara"
+                    },
+                    {
+                        instruction: "Espere a pessoa atender. Certifique-se que a sua câmara e microfone estão ligados.",
+                        visual: "🔊 Verifique:<br><br>✓ Câmara ligada<br>✓ Microfone ligado<br>✓ Volume alto<br><br>A chamar... 📞"
+                    },
+                    {
+                        instruction: "Para terminar, clique no botão vermelho de desligar, normalmente no fundo do ecrã.",
+                        visual: "📞 Botão vermelho<br><br>Para terminar a chamada<br>clique no botão vermelho<br><br>Chamada terminada! ✅"
+                    }
+                ]
+            },
+            photo: {
+                title: "Ver e Organizar Fotos",
+                steps: [
+                    {
+                        instruction: "Vamos abrir a pasta das suas fotos. Clique no ícone 'O Meu Computador' ou 'Este PC'.",
+                        visual: "💻 Procure no ambiente de trabalho:<br><br>• 'O Meu Computador'<br>• 'Este PC'<br>• Ícone de pasta 📁"
+                    },
+                    {
+                        instruction: "Agora clique em 'Imagens' ou 'As Minhas Imagens'. É onde normalmente estão as fotos.",
+                        visual: "🖼️ Pasta de Imagens<br><br>Clique duas vezes rápidas<br>para abrir a pasta"
+                    },
+                    {
+                        instruction: "Para ver uma foto maior, clique duas vezes sobre ela. A foto vai abrir.",
+                        visual: "🔍 Ver foto em tamanho grande<br><br>Clique duas vezes<br>na foto que quer ver"
+                    },
+                    {
+                        instruction: "Para criar uma nova pasta, clique com o botão direito do rato e escolha 'Nova Pasta'.",
+                        visual: "📁 Criar pasta nova:<br><br>1. Botão direito do rato<br>2. Escolher 'Nova'<br>3. Escolher 'Pasta'<br>4. Dar um nome"
+                    },
+                    {
+                        instruction: "Para mover fotos, arraste-as para a nova pasta. Clique, segure e arraste!",
+                        visual: "➡️ Mover fotos:<br><br>1. Clique na foto<br>2. Mantenha pressionado<br>3. Arraste para a pasta<br>4. Solte o botão<br><br>Organizado! ✅"
+                    }
+                ]
+            },
+            print: {
+                title: "Imprimir Documento",
+                steps: [
+                    {
+                        instruction: "Primeiro, abra o documento ou foto que quer imprimir.",
+                        visual: "📄 Abra o ficheiro<br><br>Clique duas vezes<br>no documento ou foto"
+                    },
+                    {
+                        instruction: "Agora vá ao menu 'Ficheiro' no canto superior esquerdo e clique.",
+                        visual: "📁 Menu Ficheiro<br><br>Está no canto<br>superior esquerdo<br>do programa"
+                    },
+                    {
+                        instruction: "No menu, procure e clique em 'Imprimir'. Também pode usar Ctrl+P.",
+                        visual: "🖨️ Opção Imprimir<br><br>Ou use o atalho:<br>Ctrl + P<br>(segure Ctrl e pressione P)"
+                    },
+                    {
+                        instruction: "Verifique se a impressora está selecionada e o número de cópias está correto.",
+                        visual: "⚙️ Verificar:<br><br>✓ Impressora correta<br>✓ Número de cópias: 1<br>✓ Tamanho do papel"
+                    },
+                    {
+                        instruction: "Clique no botão 'Imprimir' e aguarde. A sua impressão vai sair em breve!",
+                        visual: "✅ Clique 'Imprimir'<br><br>Aguarde a impressão<br>A sair... 📄<br><br>Pronto!"
+                    }
+                ]
+            }
+        };
+
+        let currentTask = null;
+        let currentStep = 0;
+
+        function startTask(taskId) {
+            currentTask = tasks[taskId];
+            currentStep = 0;
+            document.getElementById('taskGrid').style.display = 'none';
+            document.getElementById('stepContainer').style.display = 'block';
+            document.getElementById('stepTitle').textContent = currentTask.title;
+            updateStep();
+        }
+
+        function updateStep() {
+            const step = currentTask.steps[currentStep];
+            document.getElementById('stepInstruction').textContent = step.instruction;
+            document.getElementById('stepVisual').innerHTML = step.visual;
+            document.getElementById('stepCounter').textContent = `Passo ${currentStep + 1} de ${currentTask.steps.length}`;
+            
+            // Update buttons
+            document.getElementById('btnBack').style.display = currentStep === 0 ? 'none' : 'block';
+            
+            const btnNext = document.getElementById('btnNext');
+            if (currentStep === currentTask.steps.length - 1) {
+                btnNext.textContent = 'Concluir ✓';
+                btnNext.className = 'btn btn-complete';
+            } else {
+                btnNext.textContent = 'Próximo Passo →';
+                btnNext.className = 'btn btn-next';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < currentTask.steps.length - 1) {
+                currentStep++;
+                updateStep();
+            } else {
+                // Task completed
+                document.getElementById('stepContainer').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateStep();
+            }
+        }
+
+        function goHome() {
+            document.getElementById('taskGrid').style.display = 'grid';
+            document.getElementById('stepContainer').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            currentTask = null;
+            currentStep = 0;
+        }
+    </script>
+</body>
+</html>
