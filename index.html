@@ -350,6 +350,18 @@
                 <h2 class="task-title">Imprimir Documento</h2>
                 <p class="task-description">Imprima documentos e fotos facilmente</p>
             </div>
+
+            <div class="task-card" onclick="startTask('news')">
+                <div class="task-icon">📰</div>
+                <h2 class="task-title">Ler as Notícias</h2>
+                <p class="task-description">Mantenha-se informado sobre o que acontece</p>
+            </div>
+
+            <div class="task-card" onclick="startTask('browser')">
+                <div class="task-icon">🌐</div>
+                <h2 class="task-title">Navegar na Internet</h2>
+                <p class="task-description">Aprenda a usar o navegador de internet</p>
+            </div>
         </div>
 
         <div class="step-container" id="stepContainer">
@@ -485,14 +497,63 @@
                         visual: "✅ Clique 'Imprimir'<br><br>Aguarde a impressão<br>A sair... 📄<br><br>Pronto!"
                     }
                 ]
+            },
+            news: {
+                title: "Ler as Notícias",
+                steps: [
+                    {
+                        instruction: "Vamos abrir o navegador de internet. Procure o ícone do navegador e clique uma vez.",
+                        visual: "🌐 Navegadores comuns:<br><br>• Google Chrome (círculo colorido)<br>• Microsoft Edge (letra 'e' azul)<br>• Firefox (raposa laranja)<br><br>Clique uma vez no ícone"
+                    },
+                    {
+                        instruction: "Na barra de endereços (no topo), clique e escreva o site de notícias que prefere.",
+                        visual: "📝 Sites de notícias populares:<br><br>• www.publico.pt<br>• www.jn.pt<br>• www.rtp.pt/noticias<br>• www.dn.pt<br><br>Escreva e pressione Enter"
+                    },
+                    {
+                        instruction: "Para aumentar o tamanho das letras na página, segure a tecla Ctrl e pressione + (mais).",
+                        visual: "🔍 Aumentar texto:<br><br>Ctrl + (+)<br><br>Segure Ctrl e pressione +<br>Repita até ficar confortável<br><br>Para diminuir: Ctrl + (-)"
+                    },
+                    {
+                        instruction: "Para ler uma notícia, clique no título. Use a roda do rato para descer na página.",
+                        visual: "📖 Navegar na notícia:<br><br>• Clique no título para abrir<br>• Role a roda do rato para baixo<br>• Ou use as setas ↓ ↑ do teclado<br><br>Para voltar: botão ← no navegador"
+                    },
+                    {
+                        instruction: "Para guardar nos favoritos e aceder facilmente, clique na estrela ⭐ na barra de endereços.",
+                        visual: "⭐ Adicionar aos Favoritos:<br><br>1. Clique na estrela ⭐<br>2. Dê um nome simples<br>3. Clique 'Guardar'<br><br>Próxima vez: Clique nos favoritos<br>para aceder rapidamente!"
+                    }
+                ]
+            },
+            browser: {
+                title: "Navegar na Internet",
+                steps: [
+                    {
+                        instruction: "Vamos começar por abrir o navegador. Procure o ícone no ambiente de trabalho ou barra de tarefas.",
+                        visual: "🌐 Procure estes ícones:<br><br>• Chrome (círculo colorido)<br>• Edge (letra 'e' azul)<br>• Firefox (raposa laranja)<br><br>Clique duas vezes para abrir"
+                    },
+                    {
+                        instruction: "Na barra de endereços no topo, pode escrever um site ou fazer uma pesquisa no Google.",
+                        visual: "📍 Barra de endereços:<br><br>• Escreva: www.google.pt<br>• Ou apenas: 'receitas de bacalhau'<br>• Pressione Enter para pesquisar"
+                    },
+                    {
+                        instruction: "Para voltar à página anterior, clique na seta ← do lado esquerdo. Para avançar, clique na seta →.",
+                        visual: "⬅️ ➡️ Botões de navegação:<br><br>← Voltar (página anterior)<br>→ Avançar (se voltou atrás)<br>🔄 Atualizar (recarregar página)"
+                    },
+                    {
+                        instruction: "Para abrir uma nova aba, clique no símbolo + ao lado das abas. Assim pode ter várias páginas abertas.",
+                        visual: "📑 Abas do navegador:<br><br>+ Clique para nova aba<br>✕ Clique para fechar aba<br><br>Clique numa aba para mudar entre páginas"
+                    },
+                    {
+                        instruction: "Para pesquisar algo numa página, pressione Ctrl+F. Aparece uma caixa para escrever o que procura.",
+                        visual: "🔍 Pesquisar na página:<br><br>Ctrl + F<br><br>Escreva a palavra que procura<br>O navegador vai destacá-la<br><br>Pressione Esc para fechar"
+                    }
+                ]
             }
         };
 
         let currentTask = null;
         let currentStep = 0;
-        let currentTextSize = 'normal'; // Guardar tamanho atual
+        let currentTextSize = 'normal';
 
-        // Array com os tamanhos disponíveis
         const textSizes = ['small', 'normal', 'large', 'extra-large'];
 
         function startTask(taskId) {
@@ -510,7 +571,6 @@
             document.getElementById('stepVisual').innerHTML = step.visual;
             document.getElementById('stepCounter').textContent = `Passo ${currentStep + 1} de ${currentTask.steps.length}`;
             
-            // Update buttons
             document.getElementById('btnBack').style.display = currentStep === 0 ? 'none' : 'block';
             
             const btnNext = document.getElementById('btnNext');
@@ -528,7 +588,6 @@
                 currentStep++;
                 updateStep();
             } else {
-                // Task completed
                 document.getElementById('stepContainer').style.display = 'none';
                 document.getElementById('successMessage').style.display = 'block';
             }
@@ -564,17 +623,14 @@
         }
 
         function setTextSize(size) {
-            // Remover todas as classes de tamanho
             textSizes.forEach(s => {
                 document.body.classList.remove(`text-${s}`);
             });
             
-            // Adicionar a nova classe
             document.body.classList.add(`text-${size}`);
             currentTextSize = size;
         }
 
-        // Inicializar com tamanho normal
         document.addEventListener('DOMContentLoaded', function() {
             setTextSize('normal');
         });
